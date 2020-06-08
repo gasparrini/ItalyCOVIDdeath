@@ -1,0 +1,35 @@
+################################################################################
+# ANALYSIS ON THE EXCESS MORTALITY IN ITALY DURING COVID-19
+################################################################################
+
+################################################################################
+# PREPARE THE AGGREGATED DATA FOR THE MODEL
+################################################################################
+
+# SELECT AGE GROUP, COLLAPSE DEATHS AT PROVINCE LEVEL
+# NB: COMPUTE FOR munictype=1 ONLY (FULL PERIOD), AND TOTAL (UP TO 2019)
+datamodel <- datafull %>% 
+  filter(agegr %in% agegrsel) %>%
+  group_by(regcode, regname, provcode, provname, date) %>%
+  summarize(y = sum(ifelse(munictype==1, .data[[ysel]], 0)),
+    totdeath = sum(.data[[ysel]])) 
+
+# EXTRAPOLATE TOTAL MORTALITY IN 2020
+datamodel <- datamodel %>%
+  group_by(provcode) %>%
+  mutate(ind = year(date)<2020, prop = sum(totdeath[ind])/sum(y[ind])) %>%
+  ungroup() %>%
+  mutate(totdeath = ifelse(is.na(totdeath), round(y*prop), totdeath)) %>%
+  dplyr::select(-ind, -prop)
+
+# COMPLETE THE SERIES (FILL MISSING DAYS WITH 0'S) BY MERGING (KEEP ORDER)
+comb <- unique(datamodel[1:4])
+expcomb <- cbind(comb[rep(seq(nrow(comb)), each=length(seqdate)),],
+  date=rep(seqdate, nrow(comb)))
+datamodel <- merge(datamodel, expcomb, all.y=T, sort=F)
+datamodel[is.na(datamodel)] <- 0
+
+# DEFINE COVID SERIES, AND THE KNOTS FOR THE SPLINE
+datamodel$covidts <- pmax(as.numeric(datamodel$date-startdate),0)
+
+# MERGE HERE WITH TEMPERATURE AND FLU DATA
