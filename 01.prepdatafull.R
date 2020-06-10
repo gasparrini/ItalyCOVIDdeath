@@ -28,17 +28,20 @@ datafull$tot <- c(t(dataorig[,grep("T_", names(dataorig), fixed=T), with=F]))
 datafull <- datafull %>% 
   rename(regcode=REG, regname=NOME_REGIONE, provcode=PROV,
     provname=NOME_PROVINCIA, municcode=COD_PROVCOM, municname=NOME_COMUNE,
-  munictype=TIPO_COMUNE, agegr=CL_ETA)
+  munictype=TIPO_COMUNE, agegrfull=CL_ETA)
 
 # GENERATE DATE
 datafull <- datafull %>%
-  mutate(month=floor(GE/100), day=GE-month*100, date=make_date(year,month,day))
+  mutate(month=floor(GE/100), day=GE-month*100, date=make_date(year,month,day),
+    GE=NULL)
 
 # DEFINE THE DATE SERIES, THEN REMOVE LAST PERIOD AND ERRONEOUS LEAP DAYS
 seqdate <- seq(from=dmy("01012015"), to=dmy("30042020"), by=1)
 datafull <- subset(datafull, date%in%seqdate)
 
-# ORDER BY REGION AND PROVINCE, AND CREATE SEQUENCE AND LABELS (REDUCED)
-datafull <- arrange(datafull, regcode, provcode)
+# ORDER BY REGION/PROVINCE/DATE, AND CREATE SEQUENCE AND LABELS (REDUCED)
+datafull <- arrange(datafull, regcode, provcode, date)
 seqprov <- unique(datafull$provcode)
-labprov <- sapply(strsplit(unique(datafull$provname), "/|-"), "[[", 1)
+labprov <- sapply(strsplit(unique(datafull$provname), "/"), "[[", 1)
+seqreg <- unique(datafull$regcode)
+labreg <- sapply(strsplit(unique(datafull$regname), "/"), "[[", 1)

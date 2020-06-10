@@ -9,7 +9,7 @@
 # SELECT AGE GROUP, COLLAPSE DEATHS AT PROVINCE LEVEL
 # NB: COMPUTE FOR munictype=1 ONLY (FULL PERIOD), AND TOTAL (UP TO 2019)
 datamodel <- datafull %>% 
-  filter(agegr %in% agegrsel) %>%
+  filter(agegrfull %in% agegrsel) %>%
   group_by(regcode, regname, provcode, provname, date) %>%
   summarize(y = sum(ifelse(munictype==1, .data[[ysel]], 0)),
     totdeath = sum(.data[[ysel]])) 
@@ -22,14 +22,16 @@ datamodel <- datamodel %>%
   mutate(totdeath = ifelse(is.na(totdeath), round(y*prop), totdeath)) %>%
   dplyr::select(-ind, -prop)
 
-# COMPLETE THE SERIES (FILL MISSING DAYS WITH 0'S) BY MERGING (KEEP ORDER)
+# COMPLETE THE SERIES (FILL MISSING DAYS WITH 0'S) BY MERGING
+# NB: RE-ORDER AFTER THE MERGE
 comb <- unique(datamodel[1:4])
 expcomb <- cbind(comb[rep(seq(nrow(comb)), each=length(seqdate)),],
   date=rep(seqdate, nrow(comb)))
-datamodel <- merge(datamodel, expcomb, all.y=T, sort=F)
+datamodel <- merge(datamodel, expcomb, all.y=T)
 datamodel[is.na(datamodel)] <- 0
+datamodel <- arrange(datamodel, regcode, provcode, date)
 
-# DEFINE COVID SERIES, AND THE KNOTS FOR THE SPLINE
-datamodel$covidts <- pmax(as.numeric(datamodel$date-startdate),0)
+# DEFINE POST-PERIOD SERIES, AND THE KNOTS FOR THE SPLINE
+datamodel$tspost <- pmax(as.numeric(datamodel$date-startdate),0)
 
 # MERGE HERE WITH TEMPERATURE AND FLU DATA

@@ -9,18 +9,26 @@
 # SELECT TOTAL OR SEX-SPECIFIC DEATHS
 ysel <- "tot"
 
-# SELECT AGE GROUPS
+# SELECT AGE, THEN DEFINE AGE AGGREGATION GROUPS
 agegrsel <- 0:21
+agegrlab <- c("All","0-64","65-84","85+")
+agegrlist <- list(0:21,0:13,14:17,18:21)
+names(agegrlist) <- agegrlab
 
-# DEFINE COVID STARTING DAY
+# DEFINE AGE
+
+# DEFINE STARTING DAY FOR POST-PERIOD
 startdate <- dmy(01022020)
 
-# DEFINE BREAKS FOR COVID PERIOD (LEFT-OPEN)
+# DEFINE BREAKS FOR FEB-APR (LEFT-OPEN)
 cutdate <- c(dmy(paste0(c(outer(c("01","11","21"), c("02","03","04"), paste0)),
   "2020"))-1, dmy("30042020"))
+labperiod <- sapply(2:length(cutdate), function(i) 
+  paste(paste(day(cutdate[c(i-1,i)]+1:0), collapse="-"), 
+    month(cutdate[i], lab=T)))
 
-# DEFINE THE KNOTS FOR THE SPLINES FOR MODELLING THE EXCESS
-nkcovid <- 4
+# DEFINE THE KNOTS FOR THE SPLINES FOR MODELLING EXCESS IN POST-PERIOD
+nkpost <- 4
 
 # DEFINE THE DF FOR THE CYCLIC SPLINE FOR SEASONALITY
 dfseas <- 5
