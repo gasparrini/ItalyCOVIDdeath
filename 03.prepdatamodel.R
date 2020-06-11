@@ -14,7 +14,8 @@ datamodel <- datafull %>%
   summarize(y = sum(ifelse(munictype==1, .data[[ysel]], 0)),
     totdeath = sum(.data[[ysel]])) 
 
-# EXTRAPOLATE TOTAL MORTALITY IN 2020
+# EXTRAPOLATE TOTAL MORTALITY IN 2020 FOR MUNICIPALITIES WITHOUT SUCH INFO
+# NB: BASED ON PROPORTION IN PREVIOUS YEARS IN MUNICIPALITIES WITH FULL DATA
 datamodel <- datamodel %>%
   group_by(provcode) %>%
   mutate(ind = year(date)<2020, prop = sum(totdeath[ind])/sum(y[ind])) %>%

@@ -7,32 +7,38 @@
 ################################################################################
 
 ################################################################################
-# CREATE ARRAYS TO STORE EXCESS AND TOTAL MORTALITY
+# CREATE OBJECTS TO STORE RESULTS
 
 # DEFINE PARAMETERS
 source("02.param.R")
 
-# BY PROVINCE
+# EXCESS AND TOTAL MORTALITY BY PROVINCE
 excprov <- array(NA, dim=c(length(seqprov), length(labperiod)+1, 3,
   length(agegrlist),3), dimnames=list(labprov, c("Mar-Apr",labperiod),
     c("tot","male","female"), agegrlab, c("Est","eCIlow","eCIhigh")))
 totprov <- excprov[,,,,1]
 
-# BY REGION
+# EXCESS AND TOTAL MORTALITY BY REGION
 excreg <- array(NA, dim=c(length(seqreg), dim(excprov)[-1]),
   dimnames=c(list(labreg),dimnames(excprov)[-1]))
 totreg <- excreg[,,,,1]
 
-# BY COUNTRY
+# EXCESS AND TOTAL MORTALITY BY COUNTRY
 excitaly <- array(NA, dim=dim(excprov)[-1], dimnames=dimnames(excprov)[-1])
 totitaly <- excitaly[,,,1]
-
-################################################################################
-# DEFINE A LOOP TO PREPARE DATA AND RUN MODELS BY SEX AND AGE
 
 # DEFINE SEX/AGE COMBINATIONS (LABELS CONSISTENT WITH PARAMETERS)
 matcomb <- expand.grid(sex=dimnames(excprov)[[3]], 
   agegr=dimnames(excprov)[[4]], stringsAsFactors=F)
+
+# COEF/VCOV OF META-ANALYSIS
+metalist <- vector("list", nrow(matcomb))
+names(metalist) <- paste(matcomb[,1], matcomb[,2], sep="/")
+
+################################################################################
+# DEFINE A LOOP TO PREPARE DATA AND RUN MODELS BY SEX AND AGE
+
+
 
 # LOOP ACROSS COMBINATIONS
 for(k in seq(nrow(matcomb))) {
@@ -48,6 +54,9 @@ for(k in seq(nrow(matcomb))) {
   # AGGREGATE DATA AND RUN THE MODELS
   source("03.prepdatamodel.R")
   source("04.model.R")
+  
+  # STORE COEF/VCOV OF META-ANALYSIS
+  metalist[[k]] <- list(coef=coef(metapost), vcov=vcov(metapost))
   
   # STORE EXCESS MORTALITY - BY PROVINCE IN MAR-APR
   excprov[,"Mar-Apr", matcomb[k,1], matcomb[k,2], "Est"] <-  

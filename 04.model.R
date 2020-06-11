@@ -48,7 +48,7 @@ for(i in seq(seqprov)) {
 ################################################################################
 # SECOND-STAGE META-ANALYSES
 
-# POST-PERIOD EXCESS
+# MULTIVARIATE META-ANALYSIS OF COEFFICIENTS OF POST-PERIOD EXCESS
 coefpost <- t(sapply(stage1list, function(x) x$post$coef))
 Scov <- lapply(stage1list, function(x) x$post$vcov)
 metapost <- mixmeta(coefpost, Scov)

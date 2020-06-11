@@ -11,8 +11,8 @@ ysel <- "tot"
 
 # SELECT AGE, THEN DEFINE AGE AGGREGATION GROUPS
 agegrsel <- 0:21
-agegrlab <- c("All","0-64","65-84","85+")
-agegrlist <- list(0:21,0:13,14:17,18:21)
+agegrlab <- c("All","0-64","65-74","75-84","85-94","95+")
+agegrlist <- list(0:21,0:13,14:15,16:17,18:19,20:21)
 names(agegrlist) <- agegrlab
 
 # DEFINE AGE
