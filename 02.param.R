@@ -15,8 +15,6 @@ agegrlab <- c("All","0-64","65-74","75-84","85-94","95+")
 agegrlist <- list(0:21,0:13,14:15,16:17,18:19,20:21)
 names(agegrlist) <- agegrlab
 
-# DEFINE AGE
-
 # DEFINE STARTING DAY FOR POST-PERIOD
 startdate <- dmy(01022020)
 
@@ -32,6 +30,14 @@ nkpost <- 4
 
 # DEFINE THE DF FOR THE CYCLIC SPLINE FOR SEASONALITY
 dfseas <- 5
+
+# DEFINE PARAMETERS OF CROSS-BASIS FOR TEMPERATURE
+lagtmean <- 21
+kpertmean <- c(10,75,90)
+nklagtmean <- 3
+
+# DEFINE LAG FOR FLU
+lagflu <- 14
 
 # NUMBER OF RESAMPLING ITERATIONS FOR EMPIRICAL CI
 nsim <- 1000

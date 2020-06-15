@@ -8,14 +8,16 @@
 
 # DOWNLOAD AND UNZIP THE DATA
 # NB: ZIP IN FOLDER, UNCOMMENT TO DOWNLOAD AGAIN
-source <- "https://www.istat.it/it/files//2020/03/Dataset-decessi-comunali-giornalieri-e-tracciato-record-4giugno.zip"
-file <- "Dataset-decessi-comunali-giornalieri-e-tracciato-record-4giugno.zip"
+source <- paste0("https://www.istat.it/it/files//2020/03/Dataset-decessi-",
+  "comunali-giornalieri-e-tracciato-record-4giugno.zip")
+file <- paste0("data/", 
+  "Dataset-decessi-comunali-giornalieri-e-tracciato-record-4giugno.zip")
 # curl_download(url=source, destfile=file, quiet=FALSE, mode="wb")
-unzip(zipfile=file, exdir=getwd(), overwrite=F)
+unzip(zipfile=file, exdir=paste(getwd(), "data", sep="/"), overwrite=F)
 
 # READ THE DATA, THEN ERASE UNZIPPED (LARGE FILE)
-dataorig <- fread("comuni_giornaliero-decessi.csv",na.strings="n.d.")
-file.remove("comuni_giornaliero-decessi.csv")
+dataorig <- fread("data/comuni_giornaliero-decessi.csv",na.strings="n.d.")
+file.remove("data/comuni_giornaliero-decessi.csv")
 
 # RESHAPE TO LONG
 datafull <- dataorig[rep(seq(nrow(dataorig)), each=6), 1:9]
@@ -45,3 +47,4 @@ seqprov <- unique(datafull$provcode)
 labprov <- sapply(strsplit(unique(datafull$provname), "/"), "[[", 1)
 seqreg <- unique(datafull$regcode)
 labreg <- sapply(strsplit(unique(datafull$regname), "/"), "[[", 1)
+

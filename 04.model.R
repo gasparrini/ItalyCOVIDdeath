@@ -29,17 +29,25 @@ for(i in seq(seqprov)) {
   bpost <- onebasis(dd$tspost, fun="bs", degree=2, knots=kpost)
   kseas <- equalknots(yday(dd$date), dfseas)
   bseas <- onebasis(yday(dd$date), fun="pbs", knots=kseas)
+  cbtmean <- crossbasis(dd$tmean, lag=lagtmean,
+    argvar=list(fun="bs", degree=2, knots=quantile(dd$tmean, kpertmean/100)),
+    arglag=list(knots=logknots(lagtmean, nklagtmean)))
   # ADD TEMPERATURE AND FLU
 
   # RUN THE MODEL
-  mod <- glm(y ~ bpost + date + bseas, data=dd, family=quasipoisson)
+  # NB: PRESERVE MISSING TO COMPUTE RESIDUALS LATER
+  mod <- glm(y ~ bpost + date + bseas + cbtmean, data=dd, family=quasipoisson,
+    na.action="na.exclude")
 
   # SAVE THE RESULTS: COEF/VCOV OF VARIOUS TERMS PLUS RESIDUALS
+  # NB: FOR TEMPERATURE COMPUTE THE REDUCED PAR OF OVERALL CUMULATIVE EXP-RESP
   indpost <- grep("bpost", names(coef(mod)))
   indseas <- grep("bseas", names(coef(mod)))
+  crtmean <- crossreduce(cbtmean, mod, cen=10)
   stage1list[[i]] <- list(
     post = list(coef=coef(mod)[indpost], vcov=vcov(mod)[indpost,indpost]),
     seas = list(coef=coef(mod)[indseas], vcov=vcov(mod)[indseas,indseas]),
+    tmean = list(coef=coef(crtmean), vcov=vcov(crtmean)),
     residuals = residuals(mod, type="deviance")
   )
   # ADD TEMPERATURE (OVERALL CUMULATIVE) AND FLU

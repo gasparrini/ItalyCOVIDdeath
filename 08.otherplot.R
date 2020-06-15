@@ -14,24 +14,32 @@ source("02.param.R")
 source("03.prepdatamodel.R")
 source("04.model.R")
 
-# PLOT PARAMETERS
-layout(1)
-par(mar=c(5,4,5,1)+0.1, las=1, mgp=c(2.5,1,0))
-
-# DERIVE PREDICTIONS (USING DLNM FUNCTIONS) AND THE PLOT LAYOUT
+# DERIVE PREDICTIONS (USING DLNM FUNCTIONS)
 cppost <- crosspred(bpost, coef=coef(metapost), vcov=vcov(metapost),
   model.link="log", cen=0, by=1)
+
+# PLOT PARAMETERS
+pdf("graphs/excesstrendprov.pdf", height=5, width=8)
+parold <- par(no.readonly=TRUE)
+par(mar=c(4,4,1,1), las=1, mgp=c(2.5,1,0))
+
+# PLOT THE LAYOUT
 plot(cppost, type="n", ci="n", xaxt="n", yaxt="n", ylab="Excess mortality (%)", 
-  xlab="Date", ylim=c(0,10), main="Excess mortality in the COVID period")
+  xlab="Date", ylim=c(0,10))
 axis(1,at=0:10*10, labels=format(startdate+0:10*10,"%d %b"), cex.axis=0.7)
 axis(2,at=1:10, labels=(1:10-1)*100, cex.axis=0.8)
 
 # ADD PROVINCE-SPECIFIC AND THEN POOLED
 for(i in seq(stage1list))
   lines(cppost$predvar, exp(c(bpost %*% bluppost[[i]]$blup)),col=grey(0.8))
-lines(cppost, col=2, ci="area", ci.arg=list(col=alpha("red",0.3)))
+lines(cppost, col=2, ci="area", lwd=1.5, ci.arg=list(col=alpha("red",0.3)))
 abline(h=1)
-mtext("Pooled and by province")
+legend("topleft", c("Country-pooled","Province BLUPs"), col=c(2,grey(0.8)),
+  lty=1, bty="n", inset=0.05)
+
+# RESET AND SAVE
+par(parold)
+dev.off()
 
 ################################################################################
 # SEASONALITY
@@ -42,12 +50,21 @@ Sseas <- lapply(stage1list, function(x) x$seas$vcov)
 metaseas <- mixmeta(coefseas, Sseas)
 blupseas <- blup(metaseas, vcov=T)
 
-# PLOT
+# DERIVE PREDICTIONS (USING DLNM FUNCTIONS)
 bseas <- onebasis(1:366, fun="pbs", knots=kseas)
 cpseas <- crosspred(bseas, coef=coef(metaseas), vcov=vcov(metaseas),
   model.link="log", cen=180, by=1)
-plot(cpseas, type="n", ci="n", ylab="RR", 
-  xlab="Day of the year", ylim=c(0.8,1.6), main="Seasonality")
+
+# PLOT PARAMETERS
+pdf("graphs/seasonality.pdf", height=5, width=8)
+parold <- par(no.readonly=TRUE)
+par(mar=c(4,4,1,1), las=1, mgp=c(2.5,1,0))
+
+# PLOT THE LAYOUT
+plot(cpseas, type="n", ci="n", ylab="RR", xlab="Day of the year",
+  ylim=c(0.95,1.3))
+
+# ADD PROVINCE-SPECIFIC AND THEN POOLED
 for(i in seq(stage1list)) {
   cpseasi <- crosspred(bseas, coef=blupseas[[i]]$blup, vcov=blupseas[[i]]$vcov,
   model.link="log", cen=180, by=1)
@@ -55,7 +72,12 @@ for(i in seq(stage1list)) {
 }
 lines(cpseas, col=2, ci="area", ci.arg=list(col=alpha("red",0.3)))
 abline(h=1)
-mtext("Pooled and by province")
+legend("top", c("Country-pooled","Province BLUPs"), col=c(2,grey(0.8)),
+  lty=1, bty="n", inset=0.05)
+
+# RESET AND SAVE
+par(parold)
+dev.off()
 
 ################################################################################
 # ANALYSIS OF RESIDUALS

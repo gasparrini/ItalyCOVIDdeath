@@ -24,15 +24,30 @@ datamodel <- datamodel %>%
   dplyr::select(-ind, -prop)
 
 # COMPLETE THE SERIES (FILL MISSING DAYS WITH 0'S) BY MERGING
-# NB: RE-ORDER AFTER THE MERGE
 comb <- unique(datamodel[1:4])
 expcomb <- cbind(comb[rep(seq(nrow(comb)), each=length(seqdate)),],
   date=rep(seqdate, nrow(comb)))
-datamodel <- merge(datamodel, expcomb, all.y=T)
-datamodel[is.na(datamodel)] <- 0
-datamodel <- arrange(datamodel, regcode, provcode, date)
+datamodel <- merge(data.table(datamodel), expcomb, all.y=T, by=names(expcomb))
+if(any(naind <- is.na(datamodel$y))) datamodel[naind,c("y","totdeath")] <- 0
 
 # DEFINE POST-PERIOD SERIES, AND THE KNOTS FOR THE SPLINE
 datamodel$tspost <- pmax(as.numeric(datamodel$date-startdate),0)
 
-# MERGE HERE WITH TEMPERATURE AND FLU DATA
+# MERGE WITH FLU DATA
+# NB: AGE CONSIDERED AS > AND/OR <= 64 IF ANY GROUP BELONGING TO THESE RANGES
+flu <- read.csv("data/flu.csv", stringsAsFactors=F)
+flu$date <- as.Date(flu$date)
+fluind <- c(any(agegrsel<=13), any(agegrsel>13))
+flu$flu <- if(all(fluind)) flu$inc else if(fluind[1]) flu$inc064 else flu$inc65
+#datamodel <- merge(datamodel, flu[,c("regcode","date","flu")],
+#  by=c("regcode","date"))
+
+# MERGE WITH TEMPERATURE DATA
+temp <- read.csv("data/era5_mean2mt_2015-2020.csv", stringsAsFactors=F)
+temp <- temp %>%
+  rename(provcode=COD_PROV, tmean=X2m_tem_Kelvin) %>%
+  mutate(date=as.Date(date), tmean=tmean-273.15)
+datamodel <- merge(datamodel, temp, by=c("provcode","date"))
+
+# RE-ORDER AND BACK TO DATA.FRAME
+datamodel <- as.data.frame(arrange(datamodel, regcode, provcode, date))

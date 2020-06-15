@@ -5,7 +5,8 @@
 # LOAD THE PACKAGES
 library(curl) ; library(data.table)
 library(dplyr) ; library(lubridate)
-library(dlnm) ; library(splines) ; library(pbs) ; library(mixmeta)
+library(dlnm) ; library(mixmeta) ; library(tsModel)
+library(splines) ; library(pbs) 
 library(scales)
 library(sp) ; library(tmap) ; library(GISTools) ; library(sf)
 library(ggplot2) ; library(grid)

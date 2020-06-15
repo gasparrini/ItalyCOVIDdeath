@@ -10,9 +10,24 @@
 # MAP OF EXCESS MORTALITY (%) AFTER THE 1ST OF MARCH
 
 # READ THE SHAPEFILE OF THE PROVINCES SIMPLIFY (SOLVE SOME ISSUES), REORDER
-spprov <- st_as_sf(readRDS("province weighted centroids.Rds"))
+spprov <- st_as_sf(readRDS("data/province weighted centroids.Rds"))
 spprov <- st_simplify(spprov, dTolerance=1000)
 spprov <- spprov[match(seqprov, spprov$COD_PROV),]
+
+# BREAKS AND PALETTE
+breaks <- c(-Inf, 0, 20, 50, 100, 150, 200, 300, 400, 500, Inf)
+col <- colorRampPalette(c("yellow","red","purple3"))(10)
+
+# EXTRACT ESTIMATES AND COMPUTE THE EXCESS IN PERCENTAGE, LINK IT
+exc <- excprov[,"Mar-Apr","tot","All","Est"]
+tot <- totprov[,"Mar-Apr","tot","All"]
+spprov$excess <- exc/(tot-exc)*100
+
+# MAP FOR BOTH SEXES AND ALL AGES
+tm_shape(spprov) + 
+    tm_polygons("excess", palette=col, breaks=breaks, midpoint=NA) + 
+    tm_layout(frame=F, title="Both sexes - All ages",
+      title.position=c("center","bottom"))
 
 # DEFINE CATEGORIES FOR MAPS
 mapcomb <- data.frame(sex=c("tot","male","female")[c(1,2,3,rep(1,5))],
@@ -20,10 +35,6 @@ mapcomb <- data.frame(sex=c("tot","male","female")[c(1,2,3,rep(1,5))],
 maplab <- data.frame(sex=c("Both sexes","Males","Females")[c(1,2,3,rep(1,5))],
   agegr=c(rep("All ages", 3), agegrlab[-1]),
   stringsAsFactors=F)
-
-# BREAKS AND PALETTE
-breaks <- c(-Inf, 0, 20, 50, 100, 150, 200, 300, 400, 500, Inf)
-col <- colorRampPalette(c("yellow","red","purple3"))(10)
 
 # RUN THE LOOP
 maplist <- lapply(seq(nrow(mapcomb)), function(i) {
@@ -38,22 +49,24 @@ maplist <- lapply(seq(nrow(mapcomb)), function(i) {
     tm_polygons("excess", palette=col, breaks=breaks, midpoint=NA,
       legend.show=F) + 
     tm_layout(frame=F, title=paste(maplab[i,1], maplab[i,2], sep=" - "),
-      title.position=c("center","bottom"), scale=0.8)
+      title.position=c("center","bottom"), scale=0.7)
 })
 
 # ADD THE LEGEND
 legend <- tm_shape(spprov) + 
     tm_polygons("excess", palette=col, breaks=breaks, title="Excess (%)",
       midpoint=NA, legend.height=0.8) + 
-    tm_layout(frame=F, legend.only=T, legend.position=c("center","center"), scale=0.7)
+    tm_layout(frame=F, legend.only=T, legend.position=c("center","center"), scale=0.9)
 maplist[9] <- list(legend)
 
 # PUT TOGETHER
+pdf("graphs/map.pdf", height=10, width=7)
 grid.newpage()
 pushViewport(viewport(layout=grid.layout(3, 3)))
 for(i in seq(maplist))
   print(maplist[[i]], vp=viewport(layout.pos.row=rep(1:3, each=3)[i],
     layout.pos.col=rep(1:3, 3)[i]))
+dev.off()
 
 ################################################################################
 # PERIOD-SPECIFIC EXCESS
@@ -71,7 +84,9 @@ predpostarea <- predict(metapostarea, newdata=data.frame(area=unique(area)),
   vcov=T)
 
 # SET LAYOUT AND PLOT PARAMETERS
-layout(matrix(1:4),heights=c(1,1,1,0.3))
+pdf("graphs/excesstrend.pdf", height=7, width=5)
+parold <- par(no.readonly=TRUE)
+layout(matrix(1:4), heights=c(1,1,1,0.3))
 par(mar=c(0.2,4,0.5,1), las=1, mgp=c(2.5,1,0))
 
 # DERIVE PREDICTIONS (USING DLNM FUNCTIONS) AND THE PLOT FOR ALL
@@ -134,3 +149,8 @@ par(mar=c(4,4,0,1),mgp=c(2.5,1,0))
 plot(cppost$predvar, rep(0,length(cppost$predvar)), type="n", axes=F, ylab="",
     xlab="Date", frame.plot=F)
 axis(1,at=0:10*10, labels=format(startdate+0:10*10,"%d %b"), cex.axis=0.7)
+
+# RESET AND SAVE
+layout(1)
+par(parold)
+dev.off()
