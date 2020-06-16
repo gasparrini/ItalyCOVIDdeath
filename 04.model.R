@@ -36,8 +36,8 @@ for(i in seq(seqprov)) {
 
   # RUN THE MODEL
   # NB: PRESERVE MISSING TO COMPUTE RESIDUALS LATER
-  mod <- glm(y ~ bpost + date + bseas + cbtmean, data=dd, family=quasipoisson,
-    na.action="na.exclude")
+  mod <- glm(y ~ bpost + date + bseas + factor(wday(date)) + cbtmean, data=dd,
+    family=quasipoisson, na.action="na.exclude")
 
   # SAVE THE RESULTS: COEF/VCOV OF VARIOUS TERMS PLUS RESIDUALS
   # NB: FOR TEMPERATURE COMPUTE THE REDUCED PAR OF OVERALL CUMULATIVE EXP-RESP

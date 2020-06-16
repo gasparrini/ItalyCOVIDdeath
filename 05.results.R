@@ -38,8 +38,6 @@ names(metalist) <- paste(matcomb[,1], matcomb[,2], sep="/")
 ################################################################################
 # DEFINE A LOOP TO PREPARE DATA AND RUN MODELS BY SEX AND AGE
 
-
-
 # LOOP ACROSS COMBINATIONS
 for(k in seq(nrow(matcomb))) {
   

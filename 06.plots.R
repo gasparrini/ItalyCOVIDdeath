@@ -93,7 +93,7 @@ par(mar=c(0.2,4,0.5,1), las=1, mgp=c(2.5,1,0))
 cppost <- crosspred(bpost, coef=metalist[["tot/All"]]$coef,
   vcov=metalist[["tot/All"]]$vcov, model.link="log", cen=0, by=1)
 plot(cppost, type="n", ci="n", xaxt="n", yaxt="n", ylab="Excess mortality (%)", 
-  xlab="", ylim=c(0.8,2), frame.plot=F)
+  xlab="", ylim=c(0.8,2.075), frame.plot=F)
 axis(2,at=4:10/10*2, labels=(4:10/10*2-1)*100, cex.axis=0.8)
 lines(cppost, col=1, ci="area", lwd=1.5, ci.arg=list(col=alpha(grey(0.5),0.1)))
 
@@ -111,7 +111,7 @@ legend("topleft", c("All","Males","Females"), col=c(1,4,"orchid"), lwd=1.5,
 cppost <- crosspred(bpost, coef=metalist[["tot/All"]]$coef,
   vcov=metalist[["tot/All"]]$vcov, model.link="log", cen=0, by=1)
 plot(cppost, type="n", ci="n", xaxt="n", yaxt="n", ylab="Excess mortality (%)", 
-  xlab="", ylim=c(0.8,2), frame.plot=F)
+  xlab="", ylim=c(0.8,2.075), frame.plot=F)
 axis(2,at=4:10/10*2, labels=(4:10/10*2-1)*100, cex.axis=0.8)
 lines(cppost, col=1, ci="area", lwd=1.5, ci.arg=list(col=alpha(grey(0.5),0.1)))
 
@@ -130,7 +130,7 @@ legend("topleft", agegrlab, col=c(1,col), lwd=1.5, lty=seq(agegrlab), bty="n",
 cppost <- crosspred(bpost, coef=metalist[["tot/All"]]$coef,
   vcov=metalist[["tot/All"]]$vcov, model.link="log", cen=0, by=1)
 plot(cppost, type="n", ci="n", xaxt="n", yaxt="n", ylab="Excess mortality (%)", 
-  xlab="", ylim=c(0.8,2), frame.plot=F)
+  xlab="", ylim=c(0.8,2.075), frame.plot=F)
 axis(2,at=4:10/10*2, labels=(4:10/10*2-1)*100, cex.axis=0.8)
 lines(cppost, col=1, ci="area", lwd=1.5, ci.arg=list(col=alpha(grey(0.5),0.1)))
 
