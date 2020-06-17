@@ -11,8 +11,8 @@ ysel <- "tot"
 
 # SELECT AGE, THEN DEFINE AGE AGGREGATION GROUPS
 agegrsel <- 0:21
-agegrlab <- c("All","0-64","65-74","75-84","85-94","95+")
-agegrlist <- list(0:21,0:13,14:15,16:17,18:19,20:21)
+agegrlab <- c("All","less than 60","60-69","70-79","80-89","90 and older")
+agegrlist <- list(0:21,0:12,12:14,15:16,17:18,19:21)
 names(agegrlist) <- agegrlab
 
 # DEFINE STARTING DAY FOR POST-PERIOD

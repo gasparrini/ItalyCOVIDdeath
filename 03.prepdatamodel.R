@@ -20,7 +20,7 @@ datamodel <- datamodel %>%
   group_by(provcode) %>%
   mutate(ind = year(date)<2020, prop = sum(totdeath[ind])/sum(y[ind])) %>%
   ungroup() %>%
-  mutate(totdeath = ifelse(is.na(totdeath), round(y*prop), totdeath)) %>%
+  mutate(totdeath = ifelse(is.na(totdeath), y*prop, totdeath)) %>%
   dplyr::select(-ind, -prop)
 
 # COMPLETE THE SERIES (FILL MISSING DAYS WITH 0'S) BY MERGING

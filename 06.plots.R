@@ -7,6 +7,35 @@
 ################################################################################
 
 ################################################################################
+# EXCESS BY SEX AND AGE GROUP
+
+# EXTRACT ESTIMATES AND COMPUTE THE EXCESS IN PERCENTAGE
+# NB: TRICK FOR EXPLOITING THE ORDER AND DIMENSIONS OF ARRAYS
+exc <- excitaly["Mar-Apr",,,]
+tot <- totitaly["Mar-Apr",,]
+excper <- exc/(-exc+c(tot))*100
+
+pdf("graphs/excessagesex.pdf", height=4, width=6)
+parold <- par(no.readonly=TRUE)
+par(mar=c(2,4,1,1), las=1, mgp=c(2.5,1,0))
+
+plot(seq(dim(excper)[2]), type="n", xaxt="n", cex.axis=0.8, lab=c(5,7,7), xlab="",
+  ylab="Excess mortality (%)", xlim=c(0,dim(excper)[2])+0.5, 
+  ylim=range(excper)+diff(range(excper))/8*c(-1,1), frame.plot=F)
+axis(1, at=seq(dim(excper)[2]), labels=agegrlab, lwd=0, line=-2, cex.axis=0.8)
+title(xlab="Age group", mgp=c(0.5,1,0))
+xval <- rep(seq(dim(excper)[2]), each=3) + -1:1*0.2
+arrows(xval, c(excper[,,2]), xval, c(excper[,,3]), length=0.02, angle=90, code=3)
+points(xval, c(excper[,,1]), pch=21:23, bg=c(grey(0.3),"blue","orchid"), cex=1.3)
+abline(h=0)
+legend("top", c("Both","Males","Females"), ncol=3, bty="n", pt.cex=1.3,
+  pch=21:23, pt.bg=c(grey(0.3),"blue","orchid"))
+
+# RESET AND SAVE
+par(parold)
+dev.off()
+
+################################################################################
 # MAP OF EXCESS MORTALITY (%) AFTER THE 1ST OF MARCH
 
 # READ THE SHAPEFILE OF THE PROVINCES SIMPLIFY (SOLVE SOME ISSUES), REORDER
@@ -72,7 +101,7 @@ dev.off()
 # PERIOD-SPECIFIC EXCESS
 
 # DEFINE AREAS (NORTH/CENTRAL/SOUTH/ISLAND) BY PROVINCE
-area <- rep(rep(c("Northern","Central","Southern","Islands"), c(8,4,6,2)), 
+area <- rep(rep(c("North","Central","South","Islands"), c(8,4,6,2)), 
   provrep)
 
 # RE-RUN FOR ALL SEX-AGE AND RE-RUN META-ANALYSIS BY AREA, THEN PREDICT
