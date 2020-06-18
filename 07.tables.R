@@ -20,8 +20,7 @@ datatab1 <- datafull %>%
   dplyr::select(-regcode)
 
 # ADD AREA
-datatab1 <- cbind(datatab1[,1],Area=rep(c("North","Central","South","Islands"),
-  c(8,4,6,2)),datatab1[,-1])
+datatab1 <- cbind(datatab1[,1], Area=areareg, datatab1[,-1])
 
 
 # ADD THE TOTAL FOR COUNTRY
@@ -34,7 +33,7 @@ for(i in 3:5) datatab1[,i] <- formatC(datatab1[,i,drop=T], format="f", digits=0,
   big.mark=",")
 datatab1[-nrow(datatab1),1] <- labreg
 datatab1[,6] <- paste0(formatC(datatab1[,6,drop=T], format="f", digits=1), "%")
-names(datatab1) <- c("Region","Area", "Provinces", "Municipalities", "Deaths",
+names(datatab1) <- c("Region", "Area", "Provinces", "Municipalities", "Deaths",
   "Prop")
 
 # SAVE
@@ -43,15 +42,15 @@ write.csv(datatab1, file="tables/tab1.csv", row.names=F)
 ################################################################################
 # TABLE 2: EXCESS BY REGION
 
-tab2list <- lapply(c("tot","male","female"), function(x) {
+tab2list <- lapply(sexlab, function(x) {
   
   # COMPUTE EXCESS AND TOTAL
-  exc <- excreg[,"Mar-Apr",x,"All",]
-  tot <- totreg[,"Mar-Apr",x,"All"]
+  exc <- excreg[,1,x,1,]
+  tot <- totreg[,1,x,1]
   
   # ADD TOTAL FOR COUNTRY
-  exc <- rbind(exc, round(excitaly["Mar-Apr",x,"All",]))
-  tot <- c(tot, totitaly["Mar-Apr",x,"All"])
+  exc <- rbind(exc, round(excitaly[1,x,1,]))
+  tot <- c(tot, totitaly[1,x,1])
   rownames(exc)[nrow(exc)] <- "Italy"
 
   # FORMAT

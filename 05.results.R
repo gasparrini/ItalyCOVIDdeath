@@ -15,7 +15,7 @@ source("02.param.R")
 # EXCESS AND TOTAL MORTALITY BY PROVINCE
 excprov <- array(NA, dim=c(length(seqprov), length(labperiod)+1, 3,
   length(agegrlist),3), dimnames=list(labprov, c("Mar-Apr",labperiod),
-    c("tot","male","female"), agegrlab, c("Est","eCIlow","eCIhigh")))
+    sexlab, agegrlab, c("Est","eCIlow","eCIhigh")))
 totprov <- excprov[,,,,1]
 
 # EXCESS AND TOTAL MORTALITY BY REGION
@@ -46,7 +46,7 @@ for(k in seq(nrow(matcomb))) {
   
   # RE-DEFINE PARAMETERS
   source("02.param.R")
-  ysel <- matcomb[k,1]
+  ysel <- sexlist[[matcomb[k,1]]]
   agegrsel <- agegrlist[[matcomb[k,2]]]
   
   # AGGREGATE DATA AND RUN THE MODELS
@@ -105,5 +105,5 @@ for(k in seq(nrow(matcomb))) {
 }
 
 # AGGREGATE TOTAL MORTALITY BY REGION AND FULL COUNTRY
-totreg <- apply(totprov, 2:4, tapply, regprovcode, sum)
+totreg <- apply(totprov, 2:4, tapply, seqregprov, sum)
 totitaly <- apply(totreg, 2:4, sum)

@@ -21,50 +21,103 @@ outprovlist <- lapply(seq(dim(excprov)[2]), function(i) {
   # DEFINE TABLE
   dim <- dim(excprov)[-c(2,5)]
   dimnames <- dimnames(excprov)[-c(2,5)]
-  tab <- data.frame(Province=rep(dimnames[[1]], each=prod(dim[-1])),
-    Sex=rep(rep(dimnames[[2]], each=dim[3]), dim[1]),
-    Age=rep(dimnames[[3]], prod(dim[-3])),
-    Deaths=round(c(tot)),
-    Excess=round(c(exc[,,,1])),
-    Excess95eCIlow=round(c(exc[,,,2])),
-    Excess95eCIhigh=round(c(exc[,,,3])),
-    ExcessPer=round(c(excper[,,,1]), 1),
-    ExcessPer95eCIlow=round(c(excper[,,,2]), 1),
-    ExcessPer95eCIhigh=round(c(excper[,,,3]), 1)
-  )
+  tab <- data.frame(Province=rep(dimnames[[1]], prod(dim[-1])),
+    Region=rep(labreg[seqregprov], prod(dim[-1])),
+    Area=rep(areareg[seqregprov], prod(dim[-1])),
+    Sex=rep(rep(dimnames[[2]], dim[3]), each=dim[1]),
+    Age=rep(dimnames[[3]], each=prod(dim[-3])))
   
+  # ADD ESTIMATES (NB: EXPLOIT ORDER OF ARRAYS)
+  tab$Deaths <- round(c(tot))
+  tabest <- matrix(c(round(c(exc)), round(c(excper),1)),nrow=nrow(tab))
+  colnames(tabest) <- c(t(outer(c("Excess","ExcessPer"), 
+    c("","95eCIlow","95eCIhigh"),paste0)))
+  tab <- cbind(tab,tabest)
+  
+  # ORDER
+  for(i in c(1,4,5)) tab[,i] <- factor(tab[,i], levels=unique(tab[,i]))
+  tab <- arrange(tab, Province, Sex, Age)
+
   # RETURN
   tab
 })
 
-# NAMES
+# NAMES AND WRITE
 names(outprovlist) <- dimnames(excprov)[[2]]
+write.xlsx(outprovlist, file = "output/byprovince.xlsx")
 
-test <- list(tab1=outprovlist[[1]][1:3,],tab2=outprovlist[[2]][1:3,])
+################################################################################
+# BY REGION
 
-library(openxlsx)
-write.xlsx(test, file = "output/test.xlsx")
-write.xlsx(outprovlist, file = "output/test.xlsx")
+# CREATE LIST OF DATASET
 
-library(writexl)
-write_xlsx(test, "output/test2.xlsx")
-write_xlsx(outprovlist, "output/test2.xlsx")
+outreglist <- lapply(seq(dim(excreg)[2]), function(i) {
+  
+  # COMPUTE TOTAL AND EXCESS (N AND %)
+  exc <- excreg[,i,,,]
+  tot <- totreg[,i,,]
+  excper <- exc/(-exc+c(tot))*100
+  
+  # DEFINE TABLE
+  dim <- dim(excreg)[-c(2,5)]
+  dimnames <- dimnames(excreg)[-c(2,5)]
+  tab <- data.frame(Region=rep(dimnames[[1]], prod(dim[-1])),
+    Area=rep(areareg, prod(dim[-1])),
+    Sex=rep(rep(dimnames[[2]], dim[3]), each=dim[1]),
+    Age=rep(dimnames[[3]], each=prod(dim[-3])))
+  
+  # ADD ESTIMATES (NB: EXPLOIT ORDER OF ARRAYS)
+  tab$Deaths <- round(c(tot))
+  tabest <- matrix(c(round(c(exc)), round(c(excper), 1)), nrow=nrow(tab))
+  colnames(tabest) <- c(t(outer(c("Excess","ExcessPer"), 
+    c("","95eCIlow","95eCIhigh"), paste0)))
+  tab <- cbind(tab,tabest)
+  
+  # ORDER
+  for(i in c(1,3,4)) tab[,i] <- factor(tab[,i], levels=unique(tab[,i]))
+  tab <- arrange(tab, Region, Sex, Age)
 
+  # RETURN
+  tab
+})
 
-https://stackoverflow.com/questions/27713310/easy-way-to-export-multiple-data-frame-to-multiple-excel-worksheets
+# NAMES AND WRITE
+names(outreglist) <- dimnames(excreg)[[2]]
+write.xlsx(outreglist, file = "output/byregion.xlsx")
 
-library(xlsx)
-write.xlsx(dataframe1, file="filename.xlsx", sheetName="sheet1", row.names=FALSE)
-write.xlsx(dataframe2, file="filename.xlsx", sheetName="sheet2", append=TRUE, row.names=FALSE)
+################################################################################
+# ITALY
 
-require(openxlsx)
-list_of_datasets <- list("Name of DataSheet1" = dataframe1, "Name of Datasheet2" = dataframe2)
-write.xlsx(list_of_datasets, file = "writeXLSX2.xlsx")
+# CREATE LIST OF DATASET
 
-library(writexl)
-sheets <- list("sheet1Name" = sheet1, "sheet2Name" = sheet2) #assume sheet1 and sheet2 are data frames
-write_xlsx(sheets, "path/to/location"
+outitalylist <- lapply(seq(dim(excitaly)[1]), function(i) {
+  
+  # COMPUTE TOTAL AND EXCESS (N AND %)
+  exc <- excitaly[i,,,]
+  tot <- totitaly[i,,]
+  excper <- exc/(-exc+c(tot))*100
+  
+  # DEFINE TABLE
+  dim <- dim(excitaly)[-c(1,4)]
+  dimnames <- dimnames(excitaly)[-c(1,4)]
+  tab <- data.frame(Sex=rep(dimnames[[1]], dim[2]),
+    Age=rep(dimnames[[2]], each=dim[1]))
+  
+  # ADD ESTIMATES (NB: EXPLOIT ORDER OF ARRAYS)
+  tab$Deaths <- round(c(tot))
+  tabest <- matrix(c(round(c(exc)), round(c(excper), 1)), nrow=nrow(tab))
+  colnames(tabest) <- c(t(outer(c("Excess","ExcessPer"), 
+    c("","95eCIlow","95eCIhigh"), paste0)))
+  tab <- cbind(tab,tabest)
+  
+  # ORDER
+  for(i in 1:3) tab[,i] <- factor(tab[,i], levels=unique(tab[,i]))
+  tab <- arrange(tab, Sex, Age)
 
+  # RETURN
+  tab
+})
 
-
-
+# NAMES AND WRITE
+names(outitalylist) <- dimnames(excitaly)[[1]]
+write.xlsx(outitalylist, file = "output/italy.xlsx")

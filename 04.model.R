@@ -32,33 +32,26 @@ for(i in seq(seqprov)) {
   cbtmean <- crossbasis(dd$tmean, lag=lagtmean,
     argvar=list(fun="bs", degree=2, knots=quantile(dd$tmean, kpertmean/100)),
     arglag=list(knots=logknots(lagtmean, nklagtmean)))
-  # ADD TEMPERATURE AND FLU
-
+  flu013 <- runMean(dd$flu, 0:13)
+  
   # RUN THE MODEL
   # NB: PRESERVE MISSING TO COMPUTE RESIDUALS LATER
-  mod <- glm(y ~ bpost + date + bseas + factor(wday(date)) + cbtmean, data=dd,
-    family=quasipoisson, na.action="na.exclude")
+  mod <- glm(mformula, data=dd, family=quasipoisson, na.action="na.exclude")
 
-  # SAVE THE RESULTS: COEF/VCOV OF VARIOUS TERMS PLUS RESIDUALS
-  # NB: FOR TEMPERATURE COMPUTE THE REDUCED PAR OF OVERALL CUMULATIVE EXP-RESP
-  indpost <- grep("bpost", names(coef(mod)))
-  indseas <- grep("bseas", names(coef(mod)))
-  crtmean <- crossreduce(cbtmean, mod, cen=10)
-  stage1list[[i]] <- list(
-    post = list(coef=coef(mod)[indpost], vcov=vcov(mod)[indpost,indpost]),
-    seas = list(coef=coef(mod)[indseas], vcov=vcov(mod)[indseas,indseas]),
-    tmean = list(coef=coef(crtmean), vcov=vcov(crtmean)),
-    residuals = residuals(mod, type="deviance")
-  )
-  # ADD TEMPERATURE (OVERALL CUMULATIVE) AND FLU
+  # SAVE THE RESULTS: COEF/VCOV, RESIDUALS, OVERDISPERSION
+  loglik <- sum(dpois(mod$y,mod$fitted.values,log=TRUE))
+  disp <- sum(residuals(mod,type="pearson")^2, na.rm=T)/mod$df.res
+  stage1list[[i]] <- list(coef=coef(mod), vcov=vcov(mod), dispersion=disp,
+    residuals=residuals(mod, type="deviance"))
 }
 
 ################################################################################
 # SECOND-STAGE META-ANALYSES
 
 # MULTIVARIATE META-ANALYSIS OF COEFFICIENTS OF POST-PERIOD EXCESS
-coefpost <- t(sapply(stage1list, function(x) x$post$coef))
-Scov <- lapply(stage1list, function(x) x$post$vcov)
+indpost <- grep("bpost", names(stage1list[[1]]$coef))
+coefpost <- t(sapply(stage1list, function(x) x$coef[indpost]))
+Scov <- lapply(stage1list, function(x) x$vcov[indpost,indpost])
 metapost <- mixmeta(coefpost, Scov)
 bluppost <- blup(metapost, vcov=T)
 
@@ -68,10 +61,6 @@ bluppost <- blup(metapost, vcov=T)
 # REDEFINE BASIS 
 kpost <- equalknots(datamodel$tspost, nkpost)
 bpost <- onebasis(unique(datamodel$tspost), fun="bs", degree=2, knots=kpost)
-
-# DEFINE PERIODS
-seqperiod <- cut(unique(datamodel$tspost), cutdate-startdate,
-  labels=labperiod, include.lowest=T)
 
 # DEFINE ARRAY TO STORE THE EXCESS DEATHS BY PROVINCE, PERIOD, RESAMPLING
 excprovsim <- array(NA, dim=c(length(seqprov), length(labperiod), nsim+1),
@@ -103,13 +92,8 @@ for(i in seq(seqprov)) {
   }
 }
 
-# SEQUENCE OF REGIONS BY PROVINCE
-provrep <- tapply(datamodel$provcode, factor(datamodel$regcode,levels=seqreg),
-  function(x) length(unique(x)))
-regprovcode <- rep(seqreg, provrep)
-
 # COLLAPSE BY REGION AND THEN FULL COUNTRY
-excregsim <- apply(excprovsim, 2:3, tapply, regprovcode, sum)
+excregsim <- apply(excprovsim, 2:3, tapply, seqregprov, sum)
 excitalysim <- apply(excregsim, 2:3, sum)
 
 

@@ -35,12 +35,15 @@ datamodel$tspost <- pmax(as.numeric(datamodel$date-startdate),0)
 
 # MERGE WITH FLU DATA
 # NB: AGE CONSIDERED AS > AND/OR <= 64 IF ANY GROUP BELONGING TO THESE RANGES
-flu <- read.csv("data/flu.csv", stringsAsFactors=F)
-flu$date <- as.Date(flu$date)
+# NB: REGION 4 CODED AS 41-42 - NEED TO CHANGE FOR MERGING THEN TO CHANGE BACK
+flu <- read.csv("data/flu.csv", stringsAsFactors=F, colClasses=c(date="Date"))
 fluind <- c(any(agegrsel<=13), any(agegrsel>13))
 flu$flu <- if(all(fluind)) flu$inc else if(fluind[1]) flu$inc064 else flu$inc65
-#datamodel <- merge(datamodel, flu[,c("regcode","date","flu")],
-#  by=c("regcode","date"))
+datamodel <- mutate(datamodel, regcode=replace(regcode,provcode==21,41),
+  regcode=replace(regcode,provcode==22,42))
+datamodel <- merge(datamodel, flu[,c("regcode","date","flu")],
+  by=c("regcode","date"))
+datamodel <- mutate(datamodel, regcode=replace(regcode,regcode%in%41:42,4))
 
 # MERGE WITH TEMPERATURE DATA
 temp <- read.csv("data/era5_mean2mt_2015-2020.csv", stringsAsFactors=F)
@@ -51,3 +54,22 @@ datamodel <- merge(datamodel, temp, by=c("provcode","date"))
 
 # RE-ORDER AND BACK TO DATA.FRAME
 datamodel <- as.data.frame(arrange(datamodel, regcode, provcode, date))
+
+# DEFINE PERIODS
+seqperiod <- cut(unique(datamodel$tspost), cutdate-startdate,
+  labels=labperiod, include.lowest=T)
+
+# SEQUENCES AND REPETITIONS
+seqprov <- unique(datamodel$provcode)
+seqreg <- unique(datamodel$regcode)
+repprovreg <- with(datamodel, tapply(provcode, factor(regcode, levels=seqreg), 
+  function(x) length(unique(x))))
+seqregprov <- rep(seqreg, repprovreg)
+
+# DEFINE AREAS (NORTH/CENTRAL/SOUTH/ISLAND)
+areareg <- rep(c("North","Central","South","Islands"), c(8,4,6,2))
+areaprov <- areareg[seqregprov]
+
+# DEFINE LABELS
+labprov <- sapply(strsplit(unique(datafull$provname), "/"), "[[", 1)
+labreg <- sapply(strsplit(unique(datafull$regname), "/"), "[[", 1)

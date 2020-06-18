@@ -8,10 +8,13 @@
 
 # SELECT TOTAL OR SEX-SPECIFIC DEATHS
 ysel <- "tot"
+sexlab <- c("Total", "Males", "Females")
+sexlist <- c("tot","male","female")
+names(sexlist) <- sexlab
 
 # SELECT AGE, THEN DEFINE AGE AGGREGATION GROUPS
 agegrsel <- 0:21
-agegrlab <- c("All","less than 60","60-69","70-79","80-89","90 and older")
+agegrlab <- c("All ages","Less than 60","60-69","70-79","80-89","90 and older")
 agegrlist <- list(0:21,0:12,12:14,15:16,17:18,19:21)
 names(agegrlist) <- agegrlab
 
@@ -38,6 +41,9 @@ nklagtmean <- 3
 
 # DEFINE LAG FOR FLU
 lagflu <- 14
+
+# MODEL FORMULA
+mformula <- y ~ bpost + date + bseas + factor(wday(date)) + cbtmean
 
 # NUMBER OF RESAMPLING ITERATIONS FOR EMPIRICAL CI
 nsim <- 1000

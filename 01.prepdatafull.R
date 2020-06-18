@@ -43,8 +43,3 @@ datafull <- subset(datafull, date%in%seqdate)
 
 # ORDER BY REGION/PROVINCE/DATE, AND CREATE SEQUENCE AND LABELS (REDUCED)
 datafull <- arrange(datafull, regcode, provcode, date)
-seqprov <- unique(datafull$provcode)
-labprov <- sapply(strsplit(unique(datafull$provname), "/"), "[[", 1)
-seqreg <- unique(datafull$regcode)
-labreg <- sapply(strsplit(unique(datafull$regname), "/"), "[[", 1)
-
