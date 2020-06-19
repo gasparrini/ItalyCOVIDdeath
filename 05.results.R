@@ -9,9 +9,6 @@
 ################################################################################
 # CREATE OBJECTS TO STORE RESULTS
 
-# DEFINE PARAMETERS
-source("02.param.R")
-
 # EXCESS AND TOTAL MORTALITY BY PROVINCE
 excprov <- array(NA, dim=c(length(seqprov), length(labperiod)+1, 3,
   length(agegrlist),3), dimnames=list(labprov, c("Mar-Apr",labperiod),

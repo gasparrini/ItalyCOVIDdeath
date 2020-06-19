@@ -54,9 +54,9 @@ spprov$excess <- exc/(tot-exc)*100
 
 # MAP FOR BOTH SEXES AND ALL AGES
 tm_shape(spprov) + 
-    tm_polygons("excess", palette=col, breaks=breaks, midpoint=NA) + 
-    tm_layout(frame=F, title="Both sexes - All ages",
-      title.position=c("center","bottom"))
+  tm_polygons("excess", palette=col, breaks=breaks, midpoint=NA) + 
+  tm_layout(frame=F, title="Both sexes - All ages",
+    title.position=c("center","bottom"))
 
 # DEFINE CATEGORIES FOR MAPS
 mapcomb <- data.frame(sex=sexlab[c(1,2,3,rep(1,5))],
@@ -116,10 +116,10 @@ par(mar=c(0.2,4,0.5,1), las=1, mgp=c(2.5,1,0))
 # DERIVE PREDICTIONS (USING DLNM FUNCTIONS) AND THE PLOT FOR ALL
 cppost <- crosspred(bpost, coef=metalist[[1]]$coef, vcov=metalist[[1]]$vcov,
   model.link="log", cen=0, by=1)
-plot(cppost, type="n", ci="n", xaxt="n", yaxt="n", ylab="Excess mortality (%)", 
-  xlab="", ylim=c(0.8,2.075), frame.plot=F)
-axis(2,at=4:10/10*2, labels=(4:10/10*2-1)*100, cex.axis=0.8)
+plot(cppost, type="n", ci="n", xaxt="n", ylab="Relative risk", 
+  xlab="", ylim=c(0.8,2.075), frame.plot=F, cex.axis=0.9)
 lines(cppost, col=1, ci="area", lwd=1.5, ci.arg=list(col=alpha(grey(0.5),0.1)))
+abline(v=dmy("11032020")-startdate, lty=2)
 
 # THEN BY SEX
 ind <- which(matcomb[,1]=="Males" & matcomb[,2]=="All ages")
@@ -136,10 +136,10 @@ legend("topleft", sexlab, col=c(1,4,"orchid"), lwd=1.5,
 # PLOT FOR ALL
 cppost <- crosspred(bpost, coef=metalist[[1]]$coef, vcov=metalist[[1]]$vcov,
   model.link="log", cen=0, by=1)
-plot(cppost, type="n", ci="n", xaxt="n", yaxt="n", ylab="Excess mortality (%)", 
-  xlab="", ylim=c(0.8,2.075), frame.plot=F)
-axis(2,at=4:10/10*2, labels=(4:10/10*2-1)*100, cex.axis=0.8)
+plot(cppost, type="n", ci="n", xaxt="n", ylab="Relative risk", 
+  xlab="", ylim=c(0.8,2.075), frame.plot=F, cex.axis=0.9)
 lines(cppost, col=1, ci="area", lwd=1.5, ci.arg=list(col=alpha(grey(0.5),0.1)))
+abline(v=dmy("11032020")-startdate, lty=2)
 
 # THEN BY AGE GROUP
 col <- colorRampPalette(c("green","red"))(length(agegrlab)-1)
@@ -155,10 +155,10 @@ legend("topleft", agegrlab, col=c(1,col), lwd=1.5, lty=seq(agegrlab), bty="n",
 # PLOT FOR ALL
 cppost <- crosspred(bpost, coef=metalist[[1]]$coef, vcov=metalist[[1]]$vcov,
   model.link="log", cen=0, by=1)
-plot(cppost, type="n", ci="n", xaxt="n", yaxt="n", ylab="Excess mortality (%)", 
-  xlab="", ylim=c(0.8,2.075), frame.plot=F)
-axis(2,at=4:10/10*2, labels=(4:10/10*2-1)*100, cex.axis=0.8)
+plot(cppost, type="n", ci="n", xaxt="n", ylab="Relative risk", 
+  xlab="", ylim=c(0.8,2.075), frame.plot=F, cex.axis=0.9)
 lines(cppost, col=1, ci="area", lwd=1.5, ci.arg=list(col=alpha(grey(0.5),0.1)))
+abline(v=dmy("11032020")-startdate, lty=2)
 
 # THEN BY AREA
 col <- c("blue","red","orange","brown")
@@ -174,7 +174,7 @@ legend("topleft", c("Italy",unique(areareg)), col=c(1,col), lwd=1.5, lty=1:5,
 par(mar=c(4,4,0,1),mgp=c(2.5,1,0))
 plot(cppost$predvar, rep(0,length(cppost$predvar)), type="n", axes=F, ylab="",
     xlab="Date", frame.plot=F)
-axis(1,at=0:10*10, labels=format(startdate+0:10*10,"%d %b"), cex.axis=0.7)
+axis(1,at=0:10*10, labels=format(startdate+0:10*10,"%d %b"), cex.axis=0.9)
 
 # RESET AND SAVE
 layout(1)
