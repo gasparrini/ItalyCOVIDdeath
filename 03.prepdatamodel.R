@@ -56,8 +56,7 @@ datamodel <- merge(datamodel, temp, by=c("provcode","date"))
 datamodel <- as.data.frame(arrange(datamodel, regcode, provcode, date))
 
 # DEFINE PERIODS
-seqperiod <- cut(unique(datamodel$tspost), cutdate-startdate,
-  labels=labperiod, include.lowest=T)
+seqperiod <- cut(unique(datamodel$tspost), cutdate-startdate, labels=labperiod2)
 
 # SEQUENCES AND REPETITIONS
 seqprov <- unique(datamodel$provcode)

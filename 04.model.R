@@ -63,8 +63,9 @@ kpost <- equalknots(datamodel$tspost, nkpost)
 bpost <- onebasis(unique(datamodel$tspost), fun="bs", degree=2, knots=kpost)
 
 # DEFINE ARRAY TO STORE THE EXCESS DEATHS BY PROVINCE, PERIOD, RESAMPLING
-excprovsim <- array(NA, dim=c(length(seqprov), length(labperiod), nsim+1),
-  dimnames=list(labprov, labperiod, c("est",paste0("sim",seq(nsim)))))
+excprovsim <- array(NA, dim=c(length(seqprov), length(labperiod1)+1, nsim+1),
+  dimnames=list(labprov, c("01Mar-30Apr",labperiod1),
+    c("est",paste0("sim",seq(nsim)))))
 
 # LOOP ACROSS PROVINCES
 for(i in seq(seqprov)) {
@@ -79,7 +80,9 @@ for(i in seq(seqprov)) {
   
   # COMPUTE ATTRIBUTABLE NUMBER (EXCESS), AND STORE THE SUM BY PERIOD
   an <- (1-exp(-bpost%*%coef))*death
-  excprovsim[i,,"est"] <- tapply(an, seqperiod, sum)
+  indmarapr <- seqpost>=dmy("01032020")
+  excprovsim[i,1,"est"] <- sum(an[indmarapr])
+  excprovsim[i,-1,"est"] <- tapply(an, seqperiod, sum)
   
   # SAMPLE COEF ASSUMING A MULTIVARIATE NORMAL DISTRIBUTION
   set.seed(13041975)
@@ -88,7 +91,8 @@ for(i in seq(seqprov)) {
   # LOOP ACROSS ITERATIONS AND DO AS ABOVE WITH RESAMPLES COEF
   for(s in seq(nsim)) {
     an <- (1-exp(-bpost%*%coefsim[s,]))*death
-    excprovsim[i,,s+1] <- tapply(an, seqperiod, sum)
+    excprovsim[i,1,s+1] <- sum(an[indmarapr])
+    excprovsim[i,-1,s+1] <- tapply(an, seqperiod, sum)
   }
 }
 

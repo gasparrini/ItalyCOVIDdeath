@@ -18,15 +18,17 @@ agegrlab <- c("All ages","Less than 60","60-69","70-79","80-89","90 and older")
 agegrlist <- list(0:21,0:12,12:14,15:16,17:18,19:21)
 names(agegrlist) <- agegrlab
 
-# DEFINE STARTING DAY FOR POST-PERIOD
+# DEFINE START AND END DAY FOR POST-PERIOD
 startdate <- dmy(01022020)
+enddate <- dmy(30042020)
 
-# DEFINE BREAKS FOR FEB-APR (LEFT-OPEN)
-cutdate <- c(dmy(paste0(c(outer(c("01","11","21"), c("02","03","04"), paste0)),
-  "2020"))-1, dmy("30042020"))
-labperiod <- sapply(2:length(cutdate), function(i) 
-  paste(paste(day(cutdate[c(i-1,i)]+1:0), collapse="-"), 
-    month(cutdate[i], lab=T)))
+# DEFINE WEEK PERIODS FOR FEB-APR
+seqpost <- seq(startdate, enddate, 1)
+cutdate <- unique(c(startdate-1,seqpost[seqpost %in% tapply(seqpost, week(seqpost), last)]))
+labperiod1 <- sapply(seq(length(cutdate)-1), function(i) 
+  paste(paste0(day(cutdate[i]+1), month(cutdate[i]+1,lab=T)),
+    paste0(day(cutdate[i+1]), month(cutdate[i+1],lab=T)), sep="-"))
+labperiod2 <- paste("Week", unique(week(seqpost)))
 
 # DEFINE THE KNOTS FOR THE SPLINES FOR MODELLING EXCESS IN POST-PERIOD
 nkpost <- 4
