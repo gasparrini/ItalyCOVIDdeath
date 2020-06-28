@@ -76,7 +76,7 @@ for(k in seq(nrow(matcomb))) {
   
   # STORE TOTAL MORTALITY BY PROVINCE
   totprov[,1, matcomb[k,1], matcomb[k,2]] <- 
-    with(subset(datadeath, date>=dmy("01032020")), tapply(totdeath,provcode,sum))
+    with(subset(datadeath, date>=coviddate), tapply(totdeath,provcode,sum))
   totprov[,-1, matcomb[k,1], matcomb[k,2]] <-
     with(datadeath, tapply(totdeath, list(provcode,period), sum))
 }

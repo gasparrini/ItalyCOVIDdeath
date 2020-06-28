@@ -17,6 +17,7 @@ outprovlist <- lapply(seq(dim(excprov)[2]), function(i) {
   exc <- excprov[,i,,,]
   tot <- totprov[,i,,]
   excper <- exc/(-exc+c(tot))*100
+  excper[is.na(excper)] <- 0
   
   # DEFINE TABLE
   dim <- dim(excprov)[-c(2,5)]
@@ -57,6 +58,7 @@ outreglist <- lapply(seq(dim(excreg)[2]), function(i) {
   exc <- excreg[,i,,,]
   tot <- totreg[,i,,]
   excper <- exc/(-exc+c(tot))*100
+  excper[is.na(excper)] <- 0
   
   # DEFINE TABLE
   dim <- dim(excreg)[-c(2,5)]
@@ -96,6 +98,7 @@ outitalylist <- lapply(seq(dim(excitaly)[1]), function(i) {
   exc <- excitaly[i,,,]
   tot <- totitaly[i,,]
   excper <- exc/(-exc+c(tot))*100
+  excper[is.na(excper)] <- 0
   
   # DEFINE TABLE
   dim <- dim(excitaly)[-c(1,4)]

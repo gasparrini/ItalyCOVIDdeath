@@ -22,7 +22,6 @@ datatab1 <- datafull %>%
 # ADD AREA
 datatab1 <- cbind(datatab1[,1], Area=areareg, datatab1[,-1])
 
-
 # ADD THE TOTAL FOR COUNTRY
 datatab1[nrow(datatab1)+1,] <- data.frame(regname="Italy", "",
   prov=sum(datatab1$prov), munic=sum(datatab1$munic), tot=sum(datatab1$tot), 

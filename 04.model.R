@@ -64,7 +64,7 @@ bpost <- onebasis(unique(datamodel$tspost), fun="bs", degree=2, knots=kpost)
 
 # DEFINE ARRAY TO STORE THE EXCESS DEATHS BY PROVINCE, PERIOD, RESAMPLING
 excprovsim <- array(NA, dim=c(length(seqprov), length(labperiod1)+1, nsim+1),
-  dimnames=list(labprov, c("01Mar-15May",labperiod1),
+  dimnames=list(labprov, c("15Feb-15May",labperiod1),
     c("est",paste0("sim",seq(nsim)))))
 
 # LOOP ACROSS PROVINCES
@@ -80,7 +80,7 @@ for(i in seq(seqprov)) {
   
   # COMPUTE ATTRIBUTABLE NUMBER (EXCESS), AND STORE THE SUM BY PERIOD
   an <- (1-exp(-bpost%*%coef))*death
-  indcovid <- seqpost>=dmy("01032020")
+  indcovid <- seqpost>=coviddate
   excprovsim[i,1,"est"] <- sum(an[indcovid])
   excprovsim[i,-1,"est"] <- tapply(an, seqperiod, sum)
   

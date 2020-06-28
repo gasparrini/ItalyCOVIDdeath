@@ -18,8 +18,9 @@ agegrlab <- c("All ages","Less than 60","60-69","70-79","80-89","90 and older")
 agegrlist <- list(0:21,0:12,12:14,15:16,17:18,19:21)
 names(agegrlist) <- agegrlab
 
-# DEFINE START AND END DAY FOR POST-PERIOD
+# DEFINE START AND END DAY FOR POST-PERIOD AND COVID PERIOD
 startdate <- dmy(01022020)
+coviddate <- dmy(15022020)
 enddate <- dmy(15052020)
 
 # DEFINE WEEK PERIODS FOR FEB-APR
