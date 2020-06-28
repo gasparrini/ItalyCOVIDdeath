@@ -79,7 +79,6 @@ for(k in seq(nrow(matcomb))) {
     with(subset(datadeath, date>=dmy("01032020")), tapply(totdeath,provcode,sum))
   totprov[,-1, matcomb[k,1], matcomb[k,2]] <-
     with(datadeath, tapply(totdeath, list(provcode,period), sum))
-
 }
 
 # AGGREGATE TOTAL MORTALITY BY REGION AND FULL COUNTRY

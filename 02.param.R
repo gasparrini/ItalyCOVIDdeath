@@ -20,7 +20,7 @@ names(agegrlist) <- agegrlab
 
 # DEFINE START AND END DAY FOR POST-PERIOD
 startdate <- dmy(01022020)
-enddate <- dmy(30042020)
+enddate <- dmy(15052020)
 
 # DEFINE WEEK PERIODS FOR FEB-APR
 seqpost <- seq(startdate, enddate, 1)
@@ -49,3 +49,4 @@ mformula <- y ~ bpost + date + bseas + factor(wday(date)) + cbtmean
 
 # NUMBER OF RESAMPLING ITERATIONS FOR EMPIRICAL CI
 nsim <- 1000
+

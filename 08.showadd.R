@@ -15,8 +15,8 @@ agegrsel <- 1:10
 source("03.prepdatamodel.R")
 source("04.model.R")
 
-# EXCESS MORTALITY IN MAR-APR 2020
-excitalysim["01Mar-30Apr", "est"]
+# EXCESS MORTALITY IN 01MAR-15MAY 2020
+excitalysim["01Mar-15May", "est"]
 quantile(excitalysim[1,], c(2.5,97.5)/100)
 
 # EXCESS MORTALITY BY WEEK
@@ -31,6 +31,6 @@ mformula <- y ~ bpost + date + bseas + factor(wday(date)) + cbtmean + flu013
 source("03.prepdatamodel.R")
 source("04.model.R")
 
-# EXCESS MORTALITY IN MAR-APR 2020
-excitalysim["01Mar-30Apr", "est"]
+# EXCESS MORTALITY IN 01MAR-15MAY 2020
+excitalysim["01Mar-15May", "est"]
 quantile(excitalysim[1,], c(2.5,97.5)/100)

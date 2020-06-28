@@ -36,7 +36,7 @@ datamodel$tspost <- pmax(as.numeric(datamodel$date-startdate),0)
 # MERGE WITH FLU DATA
 # NB: AGE CONSIDERED AS > AND/OR <= 64 IF ANY GROUP BELONGING TO THESE RANGES
 # NB: REGION 4 CODED AS 41-42 - NEED TO CHANGE FOR MERGING THEN TO CHANGE BACK
-flu <- read.csv("data/flu.csv", stringsAsFactors=F, colClasses=c(date="Date"))
+flu <- read.csv("data/flu_inc_2015-2020.csv", stringsAsFactors=F, colClasses=c(date="Date"))
 fluind <- c(any(agegrsel<=13), any(agegrsel>13))
 flu$flu <- if(all(fluind)) flu$inc else if(fluind[1]) flu$inc064 else flu$inc65
 datamodel <- mutate(datamodel, regcode=replace(regcode,provcode==21,41),
