@@ -46,7 +46,3 @@ totweek <- totitaly["18Mar-24Mar", "Total", "All ages"]
 excweek <- excprov[, "18Mar-24Mar", "Total", "All ages", ] 
 totweek <- totprov[, "18Mar-24Mar", "Total", "All ages"]
 (excweek/(totweek-excweek))*100
-
-################################################################################
-# GRAPHS
-

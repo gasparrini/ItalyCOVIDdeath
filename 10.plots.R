@@ -38,26 +38,6 @@ dev.off()
 ################################################################################
 # MAP OF EXCESS MORTALITY (%) AFTER THE 1ST OF MARCH
 
-# READ THE SHAPEFILE OF THE PROVINCES SIMPLIFY (SOLVE SOME ISSUES), REORDER
-spprov <- st_as_sf(readRDS("data/province weighted centroids.Rds"))
-spprov <- st_simplify(spprov, dTolerance=1000)
-spprov <- spprov[match(seqprov, spprov$COD_PROV),]
-
-# BREAKS AND PALETTE
-breaks <- c(-Inf, 0, 20, 50, 100, 150, 200, 300, 400, 500, Inf)
-col <- colorRampPalette(c("yellow","red","purple3"))(10)
-
-# EXTRACT ESTIMATES AND COMPUTE THE EXCESS IN PERCENTAGE, LINK IT
-exc <- excprov[,1,1,1,1]
-tot <- totprov[,1,1,1]
-spprov$excess <- exc/(tot-exc)*100
-
-# MAP FOR BOTH SEXES AND ALL AGES
-tm_shape(spprov) + 
-  tm_polygons("excess", palette=col, breaks=breaks, midpoint=NA) + 
-  tm_layout(frame=F, title="Both sexes - All ages",
-    title.position=c("center","bottom"))
-
 # DEFINE CATEGORIES FOR MAPS
 mapcomb <- data.frame(sex=sexlab[c(1,2,3,rep(1,5))],
   agegr=rep(agegrlab, c(3,rep(1,5))), stringsAsFactors=F)

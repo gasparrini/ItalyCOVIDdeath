@@ -27,3 +27,28 @@ excprovsim["Firenze","15Feb-15May","est"] /
 excitalysim[-1,"est"]
 
 # THE SAME FIGURES CAN BE COMPUTED BY SEX AND AGE SUB-GROUPS
+
+################################################################################
+# MAP
+
+# READ THE SHAPEFILE OF THE PROVINCES SIMPLIFY (SOLVE SOME ISSUES), REORDER
+spprov <- st_as_sf(readRDS("data/province weighted centroids.Rds"))
+spprov <- st_simplify(spprov, dTolerance=1000)
+spprov <- spprov[match(seqprov, spprov$COD_PROV),]
+
+# BREAKS AND PALETTE
+breaks <- c(-Inf, 0, 20, 50, 100, 150, 200, 300, 400, 500, Inf)
+col <- colorRampPalette(c("yellow","red","purple3"))(10)
+
+# EXTRACT ESTIMATES AND COMPUTE THE EXCESS IN PERCENTAGE
+exc <- excprovsim[,1,1]
+tot <- with(subset(datamodel, date>=coviddate),
+  tapply(totdeath, factor(provcode, levels=unique(provcode)), sum))
+spprov$excess <- exc/(tot-exc)*100
+
+# MAP FOR BOTH SEXES AND ALL AGES
+tm_shape(spprov) + 
+  tm_polygons("excess", palette=col, breaks=breaks, midpoint=NA) + 
+  tm_layout(frame=F, title="Both sexes - All ages",
+    title.position=c("center","bottom"))
+
