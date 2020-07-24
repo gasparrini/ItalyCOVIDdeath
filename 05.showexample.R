@@ -48,7 +48,8 @@ spprov$excess <- exc/(tot-exc)*100
 
 # MAP FOR BOTH SEXES AND ALL AGES
 tm_shape(spprov) + 
-  tm_polygons("excess", palette=col, breaks=breaks, midpoint=NA) + 
+  tm_polygons("excess", palette=col, breaks=breaks, midpoint=NA,
+    title="Excess (%)") + 
   tm_layout(frame=F, title="Both sexes - All ages",
     title.position=c("center","bottom"))
 
