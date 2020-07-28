@@ -14,8 +14,8 @@ datatab1 <- datafull %>%
   group_by(regcode, regname) %>%
   summarize(prov=length(unique(provcode)), 
     munic=length(unique(municcode)), 
-    tot=sum(tot, na.rm=T), 
-    prop=length(unique(municcode[munictype==1]))/munic*100) %>%
+    cov=length(unique(municcode[munictype==1]))/munic*100,
+    tot=sum(tot, na.rm=T)) %>%
   ungroup() %>%
   dplyr::select(-regcode)
 
@@ -24,16 +24,17 @@ datatab1 <- cbind(datatab1[,1], Area=areareg, datatab1[,-1])
 
 # ADD THE TOTAL FOR COUNTRY
 datatab1[nrow(datatab1)+1,] <- data.frame(regname="Italy", "",
-  prov=sum(datatab1$prov), munic=sum(datatab1$munic), tot=sum(datatab1$tot), 
-  prop=sum(datatab1$munic*datatab1$prop)/sum(datatab1$munic))
+  prov=sum(datatab1$prov), munic=sum(datatab1$munic), 
+  cov=sum(datatab1$munic*datatab1$cov)/sum(datatab1$munic),
+  tot=sum(datatab1$tot))
 
 # FORMAT AND NAMES
-for(i in 3:5) datatab1[,i] <- formatC(datatab1[,i,drop=T], format="f", digits=0,
-  big.mark=",")
+for(i in c(3,4,6)) datatab1[,i] <- formatC(datatab1[,i,drop=T], format="f",
+  digits=0, big.mark=",")
 datatab1[-nrow(datatab1),1] <- labreg
-datatab1[,6] <- paste0(formatC(datatab1[,6,drop=T], format="f", digits=1), "%")
-names(datatab1) <- c("Region", "Area", "Provinces", "Municipalities", "Deaths",
-  "Prop")
+datatab1[,5] <- paste0(formatC(datatab1[,5,drop=T], format="f", digits=1), "%")
+names(datatab1) <- c("Region", "Area", "Provinces", "Municipalities", "Coverage",
+  "Deaths")
 
 # SAVE
 write.csv(datatab1, file="tables/tab1.csv", row.names=F)
