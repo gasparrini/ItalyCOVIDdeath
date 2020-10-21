@@ -5,9 +5,7 @@ Analysis of excess mortality in Italy during the COVID-19 pandemic
 
 This repository stores the R code, data, and full results presented in the article:
 
-Scortichini M, Schneider dos Santos R, De' Donato F, De Sario M, Michelozzi P, Davoli M, Masselot P, Sera F, Gasparrini A. Excess mortality during the COVID-19 outbreak in Italy: a two-stage interrupted time series analysis. Pre-print. DOI: 10.1101/2020.07.22.20159632 [[freely available here](https://www.medrxiv.org/content/10.1101/2020.07.22.20159632v1)]
-
-Note that this article is still under submission and it has not passed peer-review.
+Scortichini M, Schneider dos Santos R, De' Donato F, De Sario M, Michelozzi P, Davoli M, Masselot P, Sera F, Gasparrini A. Excess mortality during the COVID-19 outbreak in Italy: a two-stage interrupted time series analysis. *International Journal of Epidemiology*. 2020. DOI: 10.1093/ije/dyaa169 [[freely available here](http://www.ag-myresearch.com/2020_scortichini_ije.html)]
 
 ### Full results by geographical area, sex, age groups, and period
 
