@@ -6,7 +6,7 @@
 #    Excess mortality during the COVID-19 outbreak in Italy: a two-stage
 #    interrupted time-series analysis.
 #    International Journal of Epidemiology. 2020. DOI: 10.1093/ije/dyaa169."
-#  http://www.ag-myresearch.com/italyCOVIDdeath.html
+#  http://www.ag-myresearch.com/2020_scortichini_ije.html
 #
 # Update: 21 October 2020
 # * an updated version of this code, compatible with future versions of the
