@@ -7,6 +7,8 @@ This repository stores the R code, data, and full results presented in the artic
 
 Scortichini M, Schneider dos Santos R, De' Donato F, De Sario M, Michelozzi P, Davoli M, Masselot P, Sera F, Gasparrini A. Excess mortality during the COVID-19 outbreak in Italy: a two-stage interrupted time series analysis. *International Journal of Epidemiology*. 2020;49(6):1909.1917. DOI: 10.1093/ije/dyaa169 [[freely available here](http://www.ag-myresearch.com/2020_scortichini_ije.html)]
 
+The work was supported by the Medical Research Council-UK (Grant ID: MR/M022625/1) and the European Union’s Horizon 2020 Project Exhaustion (Grant ID: 820655).
+
 ### Full results by geographical area, sex, age groups, and period
 
 The full set of results, including number and fraction of excess deaths (with 95\%eCI) by geographical aggregation (provinces, region, and full country), sex, age groups, and period (15th of February - 15th of May 2020, and then by week starting from the 1st of February) is provided in the [output folder](https://github.com/gasparrini/ItalyCOVIDdeath/tree/master/output) of this repository.
