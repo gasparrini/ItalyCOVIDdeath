@@ -27,7 +27,7 @@ names(sexlist) <- sexlab
 # SELECT AGE, THEN DEFINE AGE AGGREGATION GROUPS
 agegrsel <- 0:21
 agegrlab <- c("All ages","Less than 60","60-69","70-79","80-89","90 and older")
-agegrlist <- list(0:21,0:12,12:14,15:16,17:18,19:21)
+agegrlist <- list(0:21,0:12,13:14,15:16,17:18,19:21)
 names(agegrlist) <- agegrlab
 
 # DEFINE START AND END DAY FOR POST-PERIOD AND COVID PERIOD
